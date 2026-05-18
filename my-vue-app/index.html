@@ -5,6 +5,19 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>六爻排盘 - 周易占卜</title>
+    <script>
+      (() => {
+        let savedTheme = null;
+
+        try {
+          savedTheme = localStorage.getItem('liuyao-theme');
+        } catch {
+          savedTheme = null;
+        }
+
+        document.documentElement.classList.toggle('dark', savedTheme !== 'light');
+      })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
