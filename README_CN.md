@@ -2,7 +2,7 @@
 
 # 六爻排盘 (LiuYao)
 
-基于 Vue 3 的易经六爻排盘 Web 应用，支持在线摇卦、卦象查询与 AI 解卦辅助。
+基于 Vue 3 的易经六爻排盘 Web 应用，支持在线摇卦、卦象查询与 AI 解卦辅助。https://xiaonainiu.cn/liuyao/
 
 ## 功能
 
