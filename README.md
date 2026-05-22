@@ -2,7 +2,7 @@
 
 # LiuYao (六爻排盘)
 
-A Vue 3 web application for I Ching (Yijing) Liu Yao divination. Features digital coin tossing with 3D animation, a complete hexagram dictionary, and AI-assisted interpretation prompts.
+A Vue 3 web application for I Ching (Yijing) Liu Yao divination. Features digital coin tossing with 3D animation, a complete hexagram dictionary, and AI-assisted interpretation prompts.  https://xiaonainiu.cn/liuyao/
 
 ## Features
 
