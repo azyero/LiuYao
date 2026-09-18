@@ -49,6 +49,13 @@ test('reported raw cast is revolution changing to thunder', () => {
   assert.equal(result.changedHexagram.fullName, '震为雷')
 })
 
+test('army with moving third yin line becomes earth over wind, not approach', () => {
+  const result = utils.performDivination(makeLines([8, 7, 6, 8, 8, 8]))
+  assert.equal(result.originalHexagram.fullName, '地水师')
+  assert.equal(result.changedHexagram.fullName, '地风升')
+  assert.equal(utils.getYaoName(2, 6), '六三')
+})
+
 test('only moving lines flip and input remains unchanged', () => {
   const lines = makeLines([6, 7, 8, 9, 7, 8])
   assert.deepEqual(utils.getChangedLines(lines).map(line => line.value), [7, 7, 8, 8, 7, 8])

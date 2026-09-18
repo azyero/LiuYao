@@ -76,6 +76,20 @@ src/
 - 动爻（6、9）阴阳互变，生成变卦
 - 自下而上六爻组成完整卦象
 
+## 部署与更新缓存
+
+入口 HTML 需要在每次访问时重新验证，避免手机沿用旧 HTML 引用的旧版脚本。当前 Nginx 的 `/liuyao/` 配置为：
+
+```nginx
+location ^~ /liuyao/ {
+    add_header Cache-Control "no-cache, must-revalidate" always;
+    alias /var/www/xingmingsi/liuyao/;
+    try_files $uri $uri/ /liuyao/index.html;
+}
+```
+
+部署时先上传新资源，再替换入口 HTML。已经打开的旧页面需要重新加载；若旧缓存尚未过期，可通过新版本参数打开，例如 `/liuyao/?v=20260919`。新版摇卦页面显示“自下而上”和“字面 = 3 · 卦符面 = 2”，初爻位于底部。
+
 ## License
 
 MIT
