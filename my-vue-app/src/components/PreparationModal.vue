@@ -5,6 +5,7 @@ defineProps<{
 
 const emit = defineEmits<{
   confirm: [question: string]
+  cancel: []
 }>()
 
 import { ref } from 'vue'
@@ -22,7 +23,7 @@ function handleConfirm() {
       <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div class="absolute inset-0 backdrop-blur-md"
           style="background: rgba(0,0,0,0.7);" />
-        <div class="relative w-full max-w-sm card p-8 animate-fade-in">
+        <div class="relative w-full max-w-sm card p-8 animate-fade-in max-h-[90vh] overflow-y-auto" role="dialog" aria-modal="true" aria-label="起卦准备">
           <div class="text-center mb-8">
             <div class="text-4xl mb-4" style="color: var(--gold-dim);">☯</div>
             <h2 class="text-xl font-serif tracking-[0.2em]" style="color: var(--text-primary);">
@@ -54,6 +55,7 @@ function handleConfirm() {
             >
               心已静，开始摇卦
             </button>
+            <button class="btn-outline w-full" @click="emit('cancel')">取消</button>
           </div>
         </div>
       </div>

@@ -263,8 +263,10 @@ const currentHint = computed(() => {
     </main>
 
     <PreparationModal
+      v-if="phase === 'preparation'"
       :visible="phase === 'preparation'"
       @confirm="confirmPreparation"
+      @cancel="reset"
     />
 
     <HexagramDetail

@@ -84,3 +84,69 @@ test('each cast records exactly the displayed coins and their face rotations', a
   casting.reset()
   assert.equal(casting.lines.value.length, 0)
 })
+
+test('all 4096 casts produce the expected original and changed hexagrams', () => {
+  const lookup = new Map(hexagrams.map(h => [h.lines.map(line => line.split('：')[0].includes('九') ? 1 : 0).join(''), h.number]))
+  assert.equal(lookup.size, 64)
+  for (let code = 0; code < 4096; code++) {
+    const values = Array.from({ length: 6 }, (_, i) => 6 + ((code >> (i * 2)) & 3))
+    const result = utils.performDivination(makeLines(values))
+    assert.equal(result.originalHexagram.number, lookup.get(values.map(v => v % 2).join('')))
+    const moving = values.some(v => v === 6 || v === 9)
+    assert.equal(result.changedHexagram?.number ?? null, moving ? lookup.get(values.map(v => v === 6 ? 1 : v === 9 ? 0 : v % 2).join('')) : null)
+  }
+})
+
+test('reset cancels a pending toss without restoring old coins or lines', async t => {
+  const { useDivination } = load('composables/useDivination.ts')
+  t.mock.method(global, 'setTimeout', callback => { queueMicrotask(callback); return 0 })
+  const casting = useDivination()
+  casting.confirmPreparation('旧问题')
+  const pending = casting.toss()
+  casting.reset()
+  await pending
+  assert.equal(casting.phase.value, 'idle')
+  assert.equal(casting.coinResults.value, null)
+  assert.equal(casting.lines.value.length, 0)
+  assert.equal(casting.currentLineIndex.value, 0)
+  assert.equal(casting.isAnimating.value, false)
+})
+
+test('a new session is not contaminated by the previous pending toss', async t => {
+  const { useDivination } = load('composables/useDivination.ts')
+  t.mock.method(global, 'setTimeout', callback => { queueMicrotask(callback); return 0 })
+  const casting = useDivination()
+  casting.confirmPreparation('旧问题')
+  const oldToss = casting.toss()
+  casting.confirmPreparation('新问题')
+  assert.equal(casting.isAnimating.value, false)
+  const newToss = casting.toss()
+  await Promise.all([oldToss, newToss])
+  assert.equal(casting.question.value, '新问题')
+  assert.equal(casting.lines.value.length, 1)
+  assert.equal(casting.currentLineIndex.value, 1)
+})
+
+test('theme still loads and toggles when browser storage is blocked', async t => {
+  let dark = null
+  const globals = {
+    window: {},
+    document: { documentElement: { classList: { toggle: (_, enabled) => { dark = enabled } } } },
+    localStorage: {
+      getItem() { throw new Error('Storage blocked') },
+      setItem() { throw new Error('Storage blocked') },
+    },
+  }
+  for (const [name, value] of Object.entries(globals)) {
+    const original = Object.getOwnPropertyDescriptor(global, name)
+    Object.defineProperty(global, name, { configurable: true, value })
+    t.after(() => original ? Object.defineProperty(global, name, original) : delete global[name])
+  }
+  const { useTheme } = load('composables/useTheme.ts')
+  const theme = useTheme()
+  assert.equal(dark, true)
+  theme.toggleTheme()
+  await require('vue').nextTick()
+  assert.equal(dark, false)
+  assert.equal(theme.theme.value, 'light')
+})

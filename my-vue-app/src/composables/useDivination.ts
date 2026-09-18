@@ -3,6 +3,7 @@ import type { YaoLine, DivinationResult, DivinationPhase } from '@/types'
 import { tossCoin, performDivination } from '@/utils/liuyao'
 
 export function useDivination() {
+  let session = 0
   const phase = ref<DivinationPhase>('idle')
   const question = ref('')
   const currentLineIndex = ref(0)
@@ -17,11 +18,13 @@ export function useDivination() {
   const isComplete = computed(() => phase.value === 'result')
 
   function startDivination() {
+    reset()
     phase.value = 'preparation'
     question.value = ''
   }
 
   function confirmPreparation(q: string) {
+    reset()
     question.value = q
     phase.value = 'tossing'
     currentLineIndex.value = 0
@@ -35,6 +38,7 @@ export function useDivination() {
     if (!canToss.value || isAnimating.value) return
 
     isAnimating.value = true
+    const activeSession = session
 
     const c1 = tossCoin()
     const c2 = tossCoin()
@@ -58,10 +62,12 @@ export function useDivination() {
     coinRotations.value = newRotations
 
     await new Promise(resolve => setTimeout(resolve, 100))
+    if (activeSession !== session) return
 
     coinResults.value = [c1, c2, c3]
 
     await new Promise(resolve => setTimeout(resolve, 1800))
+    if (activeSession !== session) return
 
     const value = (c1 + c2 + c3) as YaoLine['value']
     const newLine: YaoLine = {
@@ -81,6 +87,7 @@ export function useDivination() {
   }
 
   function reset() {
+    session++
     phase.value = 'idle'
     question.value = ''
     currentLineIndex.value = 0

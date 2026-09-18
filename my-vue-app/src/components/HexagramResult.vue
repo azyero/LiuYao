@@ -11,6 +11,7 @@ const props = defineProps<{
 
 const showPrompt = ref(false)
 const copied = ref(false)
+const copyError = ref(false)
 
 const promptText = computed(() => {
   const lines: string[] = []
@@ -29,20 +30,28 @@ const promptText = computed(() => {
 })
 
 async function copyPrompt() {
+  copied.value = false
+  copyError.value = false
   try {
     await navigator.clipboard.writeText(promptText.value)
     copied.value = true
-    setTimeout(() => { copied.value = false }, 2000)
   } catch {
     const textarea = document.createElement('textarea')
-    textarea.value = promptText.value
-    document.body.appendChild(textarea)
-    textarea.select()
-    document.execCommand('copy')
-    document.body.removeChild(textarea)
-    copied.value = true
-    setTimeout(() => { copied.value = false }, 2000)
+    try {
+      textarea.value = promptText.value
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      copied.value = document.execCommand('copy')
+    } catch {
+      copied.value = false
+    } finally {
+      textarea.remove()
+    }
   }
+  copyError.value = !copied.value
+  if (copied.value) setTimeout(() => { copied.value = false }, 2000)
 }
 </script>
 
@@ -138,6 +147,9 @@ async function copyPrompt() {
             >
               {{ copied ? '已复制 ✓' : '复制' }}
             </button>
+            <p v-if="copyError" role="status" class="mt-3 text-xs" style="color: var(--text-secondary);">
+              自动复制失败，请长按或选中上方文字手动复制。
+            </p>
           </div>
         </div>
       </Transition>
