@@ -146,7 +146,7 @@ const currentHint = computed(() => {
               {{ currentHint }}
             </p>
             <p class="text-xs" style="color: var(--text-placeholder);">
-              第 <span class="text-base font-medium" style="color: var(--gold-dim);">{{ currentLineIndex }}</span> / 6 爻
+              已完成 <span class="text-base font-medium" style="color: var(--gold-dim);">{{ currentLineIndex }}</span> / 6 爻 · 自下而上
             </p>
           </div>
 
@@ -162,8 +162,14 @@ const currentHint = computed(() => {
             />
           </div>
 
-          <div class="card p-10">
+          <div class="card px-4 py-8 sm:p-10">
             <CoinToss :animating="isAnimating" :coin-results="coinResults" :coin-rotations="coinRotations" />
+            <p class="mt-5 text-center text-xs" style="color: var(--text-muted);">
+              字面 = 3 · 卦符面 = 2
+            </p>
+            <p v-if="coinResults && !isAnimating" class="mt-2 text-center text-sm" style="color: var(--text-secondary);">
+              本次：{{ coinResults.join(' + ') }} = {{ coinResults[0] + coinResults[1] + coinResults[2] }}
+            </p>
           </div>
 
           <div v-if="lines.length > 0" class="card p-4">
@@ -174,7 +180,7 @@ const currentHint = computed(() => {
                 class="flex items-center gap-3 py-1"
               >
                 <span class="text-xs w-6 text-right" style="color: var(--text-placeholder);">
-                  {{ positionNames[i - 1] }}
+                  {{ positionNames[6 - i] }}
                 </span>
                 <div class="flex-1 flex items-center justify-center">
                   <template v-if="lines[6 - i]">

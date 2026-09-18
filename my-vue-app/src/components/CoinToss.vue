@@ -16,17 +16,19 @@ function getCirclePos(index: number) {
   const angle = index * 45
   const radius = 34
   return {
-    transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-${radius}px)`
+    transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--coin-size) * -${radius / 120}))`
   }
 }
 </script>
 
 <template>
-  <div class="flex items-center justify-center gap-5">
+  <div class="coin-tray flex items-center justify-center gap-3 sm:gap-5">
     <div
       v-for="index in 3"
       :key="index"
       class="coin-wrapper"
+      :aria-label="coinResults && !animating ? `第${index}枚：${coinResults[index - 1] === 3 ? '字面，3' : '卦符面，2'}` : `第${index}枚铜钱`"
+      role="img"
     >
       <div
         class="coin"
@@ -65,10 +67,15 @@ function getCirclePos(index: number) {
 </template>
 
 <style scoped>
+.coin-tray {
+  --coin-size: clamp(64px, 21vw, 120px);
+}
+
 .coin-wrapper {
   perspective: 1000px;
-  width: 120px;
-  height: 120px;
+  flex: 0 0 var(--coin-size);
+  width: var(--coin-size);
+  height: var(--coin-size);
 }
 
 .coin {
@@ -90,7 +97,7 @@ function getCirclePos(index: number) {
   justify-content: center;
   background:
     radial-gradient(circle at 50% 50%, #5a4d41 0%, #44392e 60%, #2b231b 100%);
-  border: 10px solid;
+  border: calc(var(--coin-size) / 12) solid;
   border-color: #c9944a;
   box-shadow:
     inset 0 0 0 2px rgba(180, 130, 60, 0.4),
@@ -107,8 +114,8 @@ function getCirclePos(index: number) {
 
 .center-hole {
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 20%;
+  height: 20%;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
@@ -134,11 +141,11 @@ function getCirclePos(index: number) {
 }
 
 .text-size {
-  font-size: 14px;
+  font-size: calc(var(--coin-size) * 14 / 120);
 }
 
 .symbol-size {
-  font-size: 13px;
+  font-size: calc(var(--coin-size) * 13 / 120);
   font-weight: 900;
 }
 </style>

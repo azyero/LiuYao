@@ -1,15 +1,9 @@
 import type { YaoLine, Hexagram, DivinationResult } from '@/types'
-import { hexagrams, trigramNames } from '@/data/hexagrams'
+import { hexagrams, trigramNames, trigramLines } from '@/data/hexagrams'
 
-const trigramToLines: Record<string, [number, number, number]> = {
-  '乾': [1, 1, 1],
-  '坤': [0, 0, 0],
-  '震': [0, 0, 1],
-  '坎': [0, 1, 0],
-  '艮': [1, 0, 0],
-  '巽': [1, 1, 0],
-  '离': [1, 0, 1],
-  '兑': [0, 1, 1],
+export function getHexagramLines(hexagram: Hexagram): number[] {
+  return [...trigramLines[hexagram.lowerTrigram], ...trigramLines[hexagram.upperTrigram]]
+    .map(value => value === 1 ? 7 : 8)
 }
 
 export function tossCoin(): 2 | 3 {
@@ -43,7 +37,7 @@ function getTrigramsFromLines(lines: YaoLine[]): { upper: string; lower: string 
   let lower = ''
   let upper = ''
 
-  for (const [name, pattern] of Object.entries(trigramToLines)) {
+  for (const [name, pattern] of Object.entries(trigramLines)) {
     if (pattern[0] === lowerLines[0] && pattern[1] === lowerLines[1] && pattern[2] === lowerLines[2]) {
       lower = name
     }
@@ -80,7 +74,9 @@ export function getChangedHexagram(lines: YaoLine[]): Hexagram | undefined {
 export function getYaoName(position: number, value: number): string {
   const positionNames = ['初', '二', '三', '四', '五', '上']
   const yinYang = value % 2 === 0 ? '六' : '九'
-  return positionNames[position] + yinYang
+  return position === 0 || position === 5
+    ? positionNames[position] + yinYang
+    : yinYang + positionNames[position]
 }
 
 export function getLineType(value: number): 'yang' | 'yin' | 'moving-yang' | 'moving-yin' {

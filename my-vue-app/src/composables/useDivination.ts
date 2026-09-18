@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import type { YaoLine, DivinationResult, DivinationPhase } from '@/types'
-import { tossThreeCoins, performDivination } from '@/utils/liuyao'
+import { tossCoin, performDivination } from '@/utils/liuyao'
 
 export function useDivination() {
   const phase = ref<DivinationPhase>('idle')
@@ -36,9 +36,9 @@ export function useDivination() {
 
     isAnimating.value = true
 
-    const c1 = Math.random() < 0.5 ? 2 : 3 as 2 | 3
-    const c2 = Math.random() < 0.5 ? 2 : 3 as 2 | 3
-    const c3 = Math.random() < 0.5 ? 2 : 3 as 2 | 3
+    const c1 = tossCoin()
+    const c2 = tossCoin()
+    const c3 = tossCoin()
 
     const baseSpins = 1080
     const newRotations: [number, number, number] = [0, 0, 0]
@@ -46,7 +46,8 @@ export function useDivination() {
 
     results.forEach((result, i) => {
       let target = coinRotations.value[i] + baseSpins
-      if (result === 2) {
+      // Front (字面) = 3, back (卦符面) = 2, matching the documented rule.
+      if (result === 3) {
         target = target - (target % 360)
       } else {
         target = target - (target % 360) + 180
@@ -62,8 +63,12 @@ export function useDivination() {
 
     await new Promise(resolve => setTimeout(resolve, 1800))
 
-    const newLine = tossThreeCoins()
-    newLine.position = currentLineIndex.value
+    const value = (c1 + c2 + c3) as YaoLine['value']
+    const newLine: YaoLine = {
+      position: currentLineIndex.value,
+      value,
+      isMoving: value === 6 || value === 9,
+    }
     lines.value = [...lines.value, newLine]
 
     isAnimating.value = false

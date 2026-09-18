@@ -1,29 +1,13 @@
 <script setup lang="ts">
 import type { Hexagram } from '@/types'
 import HexagramLine from './HexagramLine.vue'
-import { trigramNames } from '@/data/hexagrams'
+import { getHexagramLines } from '@/utils/liuyao'
 
 defineProps<{
   hexagram: Hexagram
   movingLinePositions?: number[]
 }>()
 
-const trigramLineMap: Record<string, number[]> = {
-  '乾': [1, 1, 1],
-  '坤': [0, 0, 0],
-  '震': [0, 0, 1],
-  '坎': [0, 1, 0],
-  '艮': [1, 0, 0],
-  '巽': [1, 1, 0],
-  '离': [1, 0, 1],
-  '兑': [0, 1, 1],
-}
-
-function getHexagramLines(hexagram: Hexagram): number[] {
-  const lower = trigramLineMap[hexagram.lowerTrigram] || [0, 0, 0]
-  const upper = trigramLineMap[hexagram.upperTrigram] || [0, 0, 0]
-  return [...lower, ...upper].map(v => v === 1 ? 7 : 8)
-}
 </script>
 
 <template>

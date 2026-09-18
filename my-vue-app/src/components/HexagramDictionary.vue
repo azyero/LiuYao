@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { hexagrams, searchHexagrams } from '@/data/hexagrams'
+import { searchHexagrams } from '@/data/hexagrams'
 import type { Hexagram } from '@/types'
 
 const emit = defineEmits<{

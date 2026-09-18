@@ -1,15 +1,16 @@
 import type { Hexagram } from '@/types'
 import { modernExplanations } from './modernExplanations'
 
-const trigramLines: Record<string, [number, number, number]> = {
+// All line arrays run from bottom to top (初爻 → 上爻).
+export const trigramLines: Record<string, [number, number, number]> = {
   '乾': [1, 1, 1],
   '坤': [0, 0, 0],
-  '震': [0, 0, 1],
+  '震': [1, 0, 0],
   '坎': [0, 1, 0],
   '艮': [0, 0, 1],
-  '巽': [1, 1, 0],
+  '巽': [0, 1, 1],
   '离': [1, 0, 1],
-  '兑': [0, 1, 1],
+  '兑': [1, 1, 0],
 }
 
 export const trigramNames: Record<string, string> = {
